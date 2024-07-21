@@ -1,0 +1,8 @@
+#!/bin/bash
+# param1: textfile
+# param2: line number to print
+file=$1
+ln=$2
+# returns 1 line of text
+echo $( head -n $ln $file | tail -1 )
+

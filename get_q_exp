@@ -1,0 +1,63 @@
+#!/bin/bash
+#echo $(pwd)
+# params
+# $1 = chapter 1 -> 5
+# $2 = question number
+c=$1
+q=$2
+if [ $1 == 1 ]
+then
+	qfile=./source/chapter_1_answers.txt
+	qmax=293
+fi
+if [ $1 == 2 ]
+then
+	qfile=./source/chapter_2_answers.txt
+	qmax=192
+fi
+if [ $1 == 3 ]
+then
+	qfile=./source/chapter_3_answers.txt
+	qmax=160
+fi
+if [ $1 == 4 ]
+then
+	qfile=./source/chapter_4_answers.txt
+	qmax=200
+fi
+if [ $1 == 5 ]
+then
+	qfile=./source/chapter_5_answers.txt
+	qmax=220
+fi
+
+if [ "$q" -eq "$qmax" ]
+then
+	question_file="$c.$q"
+	question_string=$(grep -wnr "$q ." $qfile)
+	starting_ln_tmp=$(echo "$question_string" | awk -F':' '{print $1}')
+	starting_ln=$(echo "$starting_ln_tmp" | awk 'NR==1{print $1}')
+	ending_ln=$(wc -l < $qfile)
+	
+fi
+if [ "$q" -lt "$qmax" ]
+then
+	qn=$(($q+1))
+	question_file="$c.$q"
+	question_string=$(grep -wnr "$q ." $qfile)
+	starting_ln_tmp=$(echo "$question_string" | awk -F':' '{print $1}')
+	starting_ln=$(echo "$starting_ln_tmp" | awk 'NR==1{print $1}')
+	question_next_string=$(grep -wnr "$qn ." $qfile)
+	ending_ln_tmp=$(echo "$question_next_string" | awk -F':' '{print $1}' | head -n 1)
+	ending_ln=$(($ending_ln_tmp-1))
+fi
+
+question_file="$c.$q"
+echo "[d][convert exp][$c,$q][ starting_ln: $starting_ln, ending_ln: $ending_ln ]"
+echo "" >> ./questions/$question_file
+echo "{EXPSTART}" >> ./questions/$question_file
+for n in $(seq $starting_ln $ending_ln)
+do
+	echo $(./lineprinter $qfile $n) >> ./questions/$question_file
+done
+echo "{EXPEND}" >> ./questions/$question_file

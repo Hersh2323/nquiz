@@ -1,0 +1,71 @@
+#!/bin/bash
+function start_quiz(){
+	default_total_questions=25
+	start_time=$(date +%s )
+	log=./logs/$start_time
+	clear
+	#echo "Starting at $start_time"
+	echo "Welcome to the N10-008 network plus quiz!"
+	read -p "How many questions would you like to do today? (default: 25)" total_questions
+	if [[ $total_questions == "" ]]
+	then
+		total_questions=$default_total_questions
+	fi
+	echo "Starting quiz at $start_time with $total_questions questions." > $log
+	current_q_num=0
+	correct_q_responses=0
+	for n in $(seq 1 $total_questions)
+	do
+		clear
+		current_q_num=$(($current_q_num+1))
+		current_question_file_name=$(ls ./questions | shuf | head -1)
+		#echo "current question file name: $current_question_file_name"
+		cq=./questions/$current_question_file_name
+		qs_string=$(grep -wnr "{QS}" $cq)
+		qs_string_ln=$(echo "$qs_string" | awk -F':' '{print $1}')
+		
+		qe_string=$(grep -wnr "{QE}" $cq)
+		qe_string_ln=$(echo "$qe_string" | awk -F':' '{print $1}')
+		
+		as_string=$(grep -wnr "{AS}" $cq)
+		as_string_ln=$(echo "$as_string" | awk -F':' '{print $1}')
+		
+		ae_string=$(grep -wnr "{AE}" $cq)
+		ae_string_ln=$(echo "$ae_string" | awk -F':' '{print $1}')
+		#echo "[d][qs: $qs_string_ln, qe: $qe_string_ln, as: $as_string_ln ae: $ae_string_ln ]"
+		text_start_ln=$(($qs_string_ln+1))
+		text_end_ln=$(($qe_string_ln-1))
+		echo "[ $current_q_num of $total_questions ]"
+		for n in $(seq $text_start_ln $text_end_ln)
+		do
+			echo $(./lineprinter $cq $n)
+		done
+
+		answer_string_ln=$((as_string_ln+1))
+		answer_string=$(./lineprinter $cq $answer_string_ln)
+		correct_answer=$(echo "$answer_string" | awk -F':' '{print $2}')
+		#echo "[d] answer_string: $answer_string"
+		#echo "[d] correct_answer: $correct_answer"
+		read -p "Select an answer(s): " user_selection
+		guess=${user_selection^^}
+		if [[ "$guess" == "$correct_answer" ]]
+		then
+			#echo "answer is correct!"
+			correct_q_responses=$(($correct_q_responses+1))
+			sleep 2
+		fi
+		if [[ "$guess" != "$correct_answer" ]]
+		then
+			#echo "answer is incorrect :("
+			#echo "Correct answer was: $correct_answer, your guess was: $guess"
+			echo "$current_question_file_name" >> $log
+			sleep 2
+		fi
+
+	done
+	echo "Score for quiz: $start_time with a score of [ $correct_q_responses of $total_questions ]" >> $log
+	clear
+	cat "$log"
+
+}
+start_quiz

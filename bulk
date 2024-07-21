@@ -1,0 +1,54 @@
+#!/bin/bash
+# ---------------------------------------
+for n in $(seq 1 293)
+do
+	echo "converting question: c1q$n"
+	./get_q 1 $n
+	echo "converting answer: c1q$n"
+	./get_q_a 1 $n
+	echo "converting explanation: c1q$n"
+	./get_q_exp 1 $n
+done
+# ---------------------------------------
+for n in $(seq 1 192)
+do
+	echo "converting question: c2q$n"
+	./get_q 2 $n
+	echo "converting answer: c2q$n"
+	./get_q_a 2 $n
+	echo "converting explanation: c2q$n"
+	./get_q_exp 2 $n
+done
+
+# ---------------------------------------
+for n in $(seq 1 160)
+do
+	echo "converting question: c3q$n"
+	./get_q 3 $n
+	echo "converting answer: c3q$n"
+	./get_q_a 3 $n
+	echo "converting explanation: c3q$n"
+	./get_q_exp 3 $n
+done
+
+# ---------------------------------------
+for n in $(seq 1 200)
+do
+	echo "converting question: c4q$n"
+	./get_q 4 $n
+	echo "converting answer: c4q$n"
+	./get_q_a 4 $n
+	echo "converting explanation: c4q$n"
+	./get_q_exp 4 $n
+done
+
+# ---------------------------------------
+for n in $(seq 1 220)
+do
+	echo "converting question: c5q$n"
+	./get_q 5 $n
+	echo "converting answer: c5q$n"
+	./get_q_a 5 $n
+	echo "converting explanation: c5q$n"
+	./get_q_exp 5 $n
+done
